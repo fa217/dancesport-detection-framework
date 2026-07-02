@@ -1,22 +1,24 @@
+# Virtual environment
+.venv/
 
-datasets/
-videos/
-runs/
-all_formation_images/
-formation_visualizations/
-formation_error_analysis/
-framework/output/
-framework/input/images/
-framework/input/videos/
-*.pt
-*.mp4
-*.mov
-*.avi
-*.csv
-*.png
-*.jpg
-*.jpeg
+# Python
 __pycache__/
 *.pyc
-.venv/
+
+# macOS
 .DS_Store
+
+# Large folders
+datasets/
+all_formation_images/
+videos/
+runs/
+formation_visualizations/
+formation_error_analysis/
+
+# Framework folders
+framework/input/
+framework/output/
+
+# Model weights
+*.pt

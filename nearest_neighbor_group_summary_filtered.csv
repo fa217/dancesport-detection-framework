@@ -1,0 +1,4 @@
+dance_style,viewpoint,images,avg_couples,avg_nearest_neighbor,avg_std_nn,avg_cv_nn
+LAT,AV,130,6.515,200.352,42.587,0.222
+LAT,TP,111,7.766,123.635,14.058,0.114
+STD,AV,165,7.182,207.975,43.337,0.213

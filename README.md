@@ -93,21 +93,20 @@ python -c "from ultralytics import YOLO; print('Ultralytics installed successful
 
 The project uses the following structure:
 
+# Project Structure
+
+```text
 bachelor_dancesport/
-│
 │
 ├── datasets/
 │   ├── dancer_category/
 │   ├── dance_style/
 │   └── formation_couple/
-|
-|----formation_error_analysis
-|
-|----formation_visualization
-|
-|
-|----framework/
-|
+│
+├── formation_error_analysis/
+├── formation_visualization/
+├── framework/
+│
 ├── runs/
 │   ├── detect/
 │   ├── evaluation/
@@ -123,22 +122,22 @@ bachelor_dancesport/
 │   ├── nearest_neighbor_analysis.py
 │   ├── compare_lat_std_detection_quality.py
 │   └── plot_*.py
-|
-── videos/
-|
-│──- app.py
-|
+│
+├── videos/
+├── app.py
 │
 ├── formation_visualizations/
 ├── formation_error_analysis/
-|....
-|
-├── requirements.txt
+│   └── ...
+│
+└── requirements.txt
+```
 
 ## 5. Dataset Structure
 
 Each dataset follows the standard YOLO folder structure:
 
+```text
 datasets/
 └── dataset_name/
     ├── images/
@@ -150,10 +149,11 @@ datasets/
     │   ├── train/
     │   ├── val/
     │   └── test/
-    |
-    |----metadata
+    │
+    ├── metadata/
     │
     └── data.yaml
+```
 
 Each image has a corresponding YOLO label file with the same filename:
 
@@ -375,53 +375,110 @@ In Streamlit, the user can select the model through the graphical interface. The
 
 ## 10. Running Video Detection
 
-Video detection is performed using:
+The DanceSport Detection Framework supports two different methods for video detection:
 
+1. **Standalone video detection using the Python script**
+2. **Interactive video detection through the Streamlit application**
+
+These methods use the same detection models but store their output in different locations.
+
+---
+
+### 10.1 Standalone Video Detection
+
+To perform video detection directly from the command line, run
+
+```bash
 python src/detect_video.py
+```
 
-The model is selected inside `src/detect_video.py`:
+Before executing the script, select the desired detection model inside `src/detect_video.py`:
 
-SELECTED_MODEL = "formation_couple"
+```python
 # SELECTED_MODEL = "dancer_category"
 # SELECTED_MODEL = "dance_style"
+SELECTED_MODEL = "formation_couple"
+```
 
-The video path is defined in the configuration dictionary:
+The input video is specified in the configuration dictionary:
 
+```python
 "video": "videos/example_video.mp4"
+```
 
-The file also contains the function run_video_detection(...), which is imported by app.py. This function is used when a user uploads a video through the Streamlit interface.
-When used through Streamlit, the processed videos are stored separately in:
-framework/output/videos/
+After processing, the generated video is automatically stored in
 
-Expected Streamlit output folders:
-framework/output/videos/dancer_category/
-framework/output/videos/dance_style/
-framework/output/videos/formation_couple/
-
-This separation ensures that terminal-based experiments and interactive Streamlit results remain organized independently.
-
-In the Streamlit application, the user can:
-
-select the desired model,
-upload a DanceSport video,
-adjust the confidence threshold,
-run video detection,
-preview the processed video,
-download the generated output video.
-Unlike the standalone script, the Streamlit workflow does not require manual changes to SELECTED_MODEL or the video path. The model and input video are selected directly through the user interface.
-
-### 10.1 Video Output
-
-Generated videos are stored in:
-
+```text
 runs/videos/
+```
 
-Expected folders:
+The output is organized according to the selected detection model:
 
-runs/videos/dancer_category/
-runs/videos/dance_style/
-runs/videos/formation_couple/
+```text
+runs/videos/
+├── dancer_category/
+├── dance_style/
+└── formation_couple/
+```
 
+This workflow is intended for standalone experiments and reproducing the detection results outside the Streamlit application.
+
+---
+
+### 10.2 Video Detection in the Streamlit Application
+
+The file `src/detect_video.py` also contains the function
+
+```python
+run_video_detection(...)
+```
+
+which is imported and used by `app.py`.
+
+Within the Streamlit application, users do **not** need to modify the source code. Instead, all settings are configured directly through the graphical user interface.
+
+The user can
+
+- select the desired detection model,
+- upload a DanceSport video,
+- adjust the confidence threshold,
+- start the detection process,
+- preview the processed video,
+- download the generated output video.
+
+Unlike the standalone script, the model selection and input video are chosen directly in the Streamlit interface.
+
+After processing, the generated video is automatically stored in
+
+```text
+framework/output/videos/
+```
+
+The output is organized according to the selected detection model:
+
+```text
+framework/output/videos/
+├── dancer_category/
+├── dance_style/
+└── formation_couple/
+```
+
+Each processed video is saved in the corresponding model directory together with a timestamp to avoid overwriting previously generated results.
+
+This separation ensures that videos generated through the Streamlit application remain independent from the videos produced by the standalone detection script.
+
+---
+
+### 10.3 Summary
+
+The output locations differ depending on how the video detection is executed.
+
+| Detection Method | Output Directory |
+|------------------|------------------|
+| Standalone script (`src/detect_video.py`) | `runs/videos/` |
+| Streamlit application (`app.py`) | `framework/output/videos/` |
+
+In both cases, the output videos are automatically organized into separate folders for each detection model.
 
 ## 11. Formation Analysis Workflow
 
@@ -615,6 +672,7 @@ If the trained weights are already available, the models do not need to be retra
 
 After running the full workflow, the output structure should look like this:
 
+```text
 runs/
 ├── detect/
 │   ├── dancer_category_model/
@@ -635,6 +693,7 @@ runs/
     ├── dancer_category/
     ├── dance_style/
     └── formation_couple/
+```
 
 ## 20. Purpose of the Formation Couple Model
 
