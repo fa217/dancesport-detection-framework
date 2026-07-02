@@ -139,7 +139,7 @@ Due to GitHub's file size limitations, the following resources are **not include
 
 These files can be downloaded from the following u:cloud link:
 
-**<[u:cloud link](https://ucloud.univie.ac.at/index.php/s/3i4CSercWDFkges)>**
+**<https://ucloud.univie.ac.at/index.php/s/3i4CSercWDFkges>**
 
 After downloading the files from u:cloud, copy the folders into the project directory so that the following structure is available:
 

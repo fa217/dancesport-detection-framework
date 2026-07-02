@@ -230,6 +230,7 @@ Only one dataset should be selected at a time.
 
 The training configuration is defined in the `DATASETS` dictionary inside `train_yolo.py`.
 
+```python
 DATASETS = {
     "dancer_category": {
         "data": "datasets/dancer_category/data.yaml",
@@ -253,6 +254,7 @@ DATASETS = {
         "name": "formation_couple_model"
     }
 }
+```
 
 ### 7.2 Training Output
 
