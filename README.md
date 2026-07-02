@@ -44,7 +44,7 @@ The project was developed and tested using the following software:
 | Component | Version / Specification |
 |----------|--------------------------|
 | Python | 3.11 |
-| Ultralytics | YOLOv11 |
+| Ultralytics | YOLO26n |
 | PyTorch | Latest compatible version |
 | OpenCV | Latest compatible version |
 | NumPy | Latest compatible version |
