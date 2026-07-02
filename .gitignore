@@ -12,13 +12,15 @@ __pycache__/
 datasets/
 all_formation_images/
 videos/
-runs/
 formation_visualizations/
 formation_error_analysis/
+
+# Generated outputs
+runs/videos/
+runs/test/
 
 # Framework folders
 framework/input/
 framework/output/
 
-# Model weights
-*.pt
+
