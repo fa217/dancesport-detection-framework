@@ -144,6 +144,8 @@ These files can be downloaded from the following u:cloud link:
 After downloading the files from u:cloud, copy the folders into the project directory so that the following structure is available:
 
 ```text
+all_formation_images/
+
 datasets/
 
 runs/

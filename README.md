@@ -39,55 +39,75 @@ The **Formation Couple Model** is the central model of this project. Its detecti
 
 ## 2. Requirements
 
-The project was developed and tested with:
+The project was developed and tested using the following software:
 
-Python 3.11
-Ultralytics YOLO26n
-PyTorch
-OpenCV
-NumPy
-Pandas
-Matplotlib
-Pillow
-Streamlit
+| Component | Version / Specification |
+|----------|--------------------------|
+| Python | 3.11 |
+| Ultralytics | YOLOv11 |
+| PyTorch | Latest compatible version |
+| OpenCV | Latest compatible version |
+| NumPy | Latest compatible version |
+| Pandas | Latest compatible version |
+| Matplotlib | Latest compatible version |
+| Pillow | Latest compatible version |
+| Streamlit | Latest compatible version |
 
 The experiments were performed on a CPU-based system:
 
-MacBook Air 2017
-Intel Core i5
-8 GB RAM
-Intel HD Graphics 6000
-No CUDA-capable GPU
+| Component | Specification |
+|----------|---------------|
+| Device | MacBook Air (2017) |
+| Processor | Intel Core i5 |
+| Memory | 8 GB RAM |
+| Graphics | Intel HD Graphics 6000 |
+| GPU | No CUDA-capable GPU |
+
+---
 
 ## 3. Installation
 
 ### 3.1 Create a Virtual Environment
 
-From the project root directory:
+From the project root directory, create a virtual environment:
 
+```bash
 python3 -m venv .venv
+```
 
-Activate the virtual environment:
+Activate the virtual environment on macOS/Linux:
 
+```bash
 source .venv/bin/activate
+```
 
 On Windows:
 
+```powershell
 .venv\Scripts\activate
+```
 
-### 3.2 Install Dependencies
+---
+
+### 3.2 Install the Dependencies
 
 Install all required Python packages:
 
+```bash
 pip install -r requirements.txt
+```
 
-If `requirements.txt` is not available, install the most important dependencies manually:
+If `requirements.txt` is not available, install the main dependencies manually:
 
+```bash
 pip install ultralytics streamlit opencv-python pandas numpy matplotlib pillow
+```
 
-Check whether Ultralytics YOLO is installed correctly:
+To verify that Ultralytics is installed correctly, run:
 
+```bash
 python -c "from ultralytics import YOLO; print('Ultralytics installed successfully')"
+```
 
 ## 4. Project Structure
 
@@ -155,76 +175,118 @@ datasets/
     └── data.yaml
 ```
 
-Each image has a corresponding YOLO label file with the same filename:
+Each image has a corresponding YOLO annotation file with the same filename. For example:
 
+```text
 images/train/example_001.jpg
 labels/train/example_001.txt
+```
 
-The annotation files are stored in YOLO format:
+The annotation files follow the standard YOLO format:
 
+```text
 class_id x_center y_center width height
+```
 
-All coordinates are normalized between 0 and 1.
+where:
+
+- `class_id` is the integer identifier of the object class.
+- `x_center` is the normalized x-coordinate of the bounding box center.
+- `y_center` is the normalized y-coordinate of the bounding box center.
+- `width` is the normalized bounding box width.
+- `height` is the normalized bounding box height.
+
+All coordinate values are normalized to the range **[0, 1]** relative to the image dimensions.
 
 ## 6. Dataset Descriptions
 
 ### 6.1 Dancer Category Dataset
 
-Path:
+Dataset location:
 
+```text
 datasets/dancer_category/
+```
 
-Classes:
+### Classes
 
-0 dance_couple
-1 female_dancer
-2 formation
-3 male_dancer
+| Class ID | Class Name |
+|:--------:|------------|
+| 0 | `dance_couple` |
+| 1 | `female_dancer` |
+| 2 | `formation` |
+| 3 | `male_dancer` |
 
 This dataset is used to train the **Dancer Category Model**.
 
+The model detects the different object categories that appear in DanceSport competition images, including individual dancers, dance couples, and formation scenes.
+
+---
+
 ### 6.2 Dance Style Dataset
 
-Path:
+Dataset location:
 
+```text
 datasets/dance_style/
+```
 
-Classes:
+### Classes
 
-0 latin
-1 standard
+| Class ID | Class Name |
+|:--------:|------------|
+| 0 | `latin` |
+| 1 | `standard` |
 
 This dataset is used to train the **Dance Style Model**.
+
+The model classifies DanceSport images into the two competition disciplines: **Latin** and **Standard**. It serves as the basis for automatically distinguishing between the two dance styles before further analysis.
 
 ---
 
 ### 6.3 Formation Couple Dataset
 
-Path:
+Dataset location:
 
+```text
 datasets/formation_couple/
+```
 
-Classes:
+### Classes
 
-0 couple
+| Class ID | Class Name |
+|:--------:|------------|
+| 0 | `couple` |
 
 This dataset is used to train the **Formation Couple Model**.
 
-This is the most important dataset of the project because it enables the detection of individual couples within formation scenes.
+It is the primary dataset of this project, as it enables the detection of individual couples within DanceSport formation scenes. The detected couples form the basis for the subsequent spatial analyses, including coordinate extraction, nearest-neighbor analysis, and formation quality evaluation.
+
+---
 
 ## 7. Training the Models
 
-Training is performed using:
+Model training is performed by running:
 
+```bash
 python src/train_yolo.py
+```
 
-The model to be trained is selected inside `src/train_yolo.py`:
+The dataset to be used for training is selected in `src/train_yolo.py` by setting the `SELECTED_DATASET` variable:
 
+```python
 SELECTED_DATASET = "dancer_category"
 # SELECTED_DATASET = "dance_style"
 # SELECTED_DATASET = "formation_couple"
+```
 
-Only one dataset should be selected at a time.
+Only **one dataset** should be selected at a time.
+
+After training, the model weights and training results are automatically stored in:
+
+```text
+runs/detect/
+```
 
 ### 7.1 Training Configuration
 
@@ -256,54 +318,68 @@ DATASETS = {
 }
 ```
 
-### 7.2 Training Output
+## 7.2 Training Output
 
 After training, the results are stored in:
 
+```text
 runs/detect/
+```
 
-Expected output folders:
+### Expected output folders
 
-runs/detect/dancer_category_model/
-runs/detect/dance_style_model/
-runs/detect/formation_couple_model/
+```text
+runs/detect/
+├── dancer_category_model/
+├── dance_style_model/
+└── formation_couple_model/
+```
 
-Each training folder contains:
+### Contents of each training folder
 
-weights/
-    best.pt
-    last.pt
-
-results.png
-results.csv
-confusion_matrix.png
-confusion_matrix_normalized.png
-BoxPR_curve.png
-BoxF1_curve.png
-BoxP_curve.png
-BoxR_curve.png
-val_batch*_pred.jpg
+```text
+model_name/
+├── weights/
+│   ├── best.pt
+│   └── last.pt
+├── results.png
+├── results.csv
+├── confusion_matrix.png
+├── confusion_matrix_normalized.png
+├── BoxPR_curve.png
+├── BoxF1_curve.png
+├── BoxP_curve.png
+├── BoxR_curve.png
+└── val_batch*_pred.jpg
+```
 
 The trained model weights are stored in:
 
+```text
 runs/detect/model_name/weights/best.pt
+```
 
 ## 8. Evaluating the Models
 
 Model evaluation is performed using:
 
+```text
 python src/evaluate_model.py
+```
 
 The model is selected inside `src/evaluate_model.py`:
 
+```python
 SELECTED_MODEL = "dancer_category"
 # SELECTED_MODEL = "dance_style"
 # SELECTED_MODEL = "formation_couple"
+```
 
 Only one model should be selected at a time.
 
 Evaluation is performed on the test split:
 
+```python
 metrics = model.val(
     data=str(data_path),
     split="test",
@@ -312,68 +388,84 @@ metrics = model.val(
     name=SELECTED_MODEL,
     exist_ok=True
 )
+```
 
 ### 8.1 Evaluation Output
 
-Evaluation results are stored in:
+The evaluation results are stored in:
 
+```text
 runs/evaluation/
+├── dancer_category/
+├── dance_style/
+└── formation_couple/
+```
 
-Expected output folders:
+Each evaluation folder contains metrics and visualizations generated by YOLO, including:
 
-runs/evaluation/dancer_category/
-runs/evaluation/dance_style/
-runs/evaluation/formation_couple/
+```text
+model_name/
+├── confusion_matrix.png
+├── confusion_matrix_normalized.png
+├── BoxPR_curve.png
+├── BoxF1_curve.png
+├── BoxP_curve.png
+├── BoxR_curve.png
+├── F1_curve.png
+├── P_curve.png
+├── R_curve.png
+├── val_batch*_labels.jpg
+├── val_batch*_pred.jpg
+└── results.csv
+```
 
-Each evaluation folder contains:
-
-evaluation_metrics.csv
-confusion_matrix.png
-confusion_matrix_normalized.png
-BoxPR_curve.png
-BoxF1_curve.png
-BoxP_curve.png
-BoxR_curve.png
-val_batch*_pred.jpg
+The returned `metrics` object can also be used programmatically to access evaluation statistics such as mAP, precision, and recall.
 
 ### 8.2 Evaluation Metrics
 
 The following metrics are reported:
 
-* Precision
-* Recall
-* mAP@0.5
-* mAP@0.5:0.95
+- **Precision**
+- **Recall**
+- **mAP@0.5**
+- **mAP@0.5:0.95**
 
 ## 9. Running Test Set Predictions
 
 To generate prediction images on the test set, run:
 
+```bash
 python src/detect_image.py
+```
 
-The model is selected inside `src/detect_image.py`:
+The model is selected in `src/detect_image.py` by setting the `SELECTED_MODEL` variable:
 
+```python
 SELECTED_MODEL = "dancer_category"
 # SELECTED_MODEL = "dance_style"
 # SELECTED_MODEL = "formation_couple"
+```
+
+Only **one model** should be selected at a time.
 
 ### 9.1 Test Prediction Output
 
-Results are stored in:
+The prediction results are stored in:
 
+```text
 runs/test/
+├── dancer_category/
+├── dance_style/
+└── formation_couple/
+```
 
-Expected folders:
+Each folder contains the test images with the predicted bounding boxes.
 
-runs/test/dancer_category/
-runs/test/dance_style/
-runs/test/formation_couple/
+### Integration with the Streamlit Application
 
-These folders contain the test images with predicted bounding boxes.
+The file `src/detect_image.py` also provides the function `run_image_detection(...)`, which is imported and used by `app.py`. This allows the same image detection pipeline to be reused in the Streamlit web application.
 
-The file also contains the function run_image_detection(...), which is imported by app.py. This allows the same image detection logic to be reused inside the Streamlit interface.
-
-In Streamlit, the user can select the model through the graphical interface. Therefore, no code changes are required when using the web application.
+Within the Streamlit interface, the user can select the desired model through the graphical user interface. Therefore, no code modifications are required when using the web application.
 
 ## 10. Running Video Detection
 
@@ -484,17 +576,21 @@ In both cases, the output videos are automatically organized into separate folde
 
 ## 11. Formation Analysis Workflow
 
-The formation analysis is based on the **Formation Couple Model**.
-
-The workflow is:
+The formation analysis is based on the **Formation Couple Model** and consists of the following steps:
 
 1. Detect all couples in a formation image.
 2. Extract the bounding box of each detected couple.
 3. Calculate the center point of each bounding box.
 4. Store the extracted coordinates.
 5. Calculate nearest-neighbor distances.
-6. Evaluate formation quality using spatial metrics.
+6. Evaluate the formation quality using spatial metrics.
 7. Compare Latin and Standard formations.
+
+The complete workflow is implemented in:
+
+```text
+src/analyze_formation.py
+```
 
 ---
 
@@ -502,173 +598,235 @@ The workflow is:
 
 For each detected couple, the center point of the bounding box is calculated as:
 
+```python
 x_center = (x1 + x2) / 2
 y_center = (y1 + y2) / 2
+```
 
-The extracted coordinates are saved in:
+The extracted coordinates are stored in:
 
+```text
 formation_couple_coordinates.csv
+```
 
-These coordinates are the basis for the formation quality analysis.
+These coordinates serve as the basis for all subsequent formation quality analyses, including nearest-neighbor distance calculations and statistical comparisons between Latin and Standard formations.
 
 ## 13. Nearest-Neighbor Analysis
 
-The nearest-neighbor analysis is performed using:
+The nearest-neighbor analysis is performed by running:
 
+```bash
 python src/nearest_neighbor_analysis.py
+```
 
-The script calculates the distance from each couple to its nearest neighboring couple in the same image.
+The script computes the Euclidean distance from each detected couple to its nearest neighboring couple within the same formation image.
 
-Generated files:
+### Generated Files
 
+The analysis produces the following output files:
+
+```text
 nearest_neighbor_analysis_all.csv
 nearest_neighbor_excluded_images.csv
 nearest_neighbor_analysis_filtered.csv
 nearest_neighbor_group_summary_filtered.csv
+```
 
 ### 13.1 Output Files
 
 #### `nearest_neighbor_analysis_all.csv`
 
-Contains nearest-neighbor statistics for all analyzed formation images before filtering.
+Contains the nearest-neighbor distance for every detected couple in all analyzed formation images before any filtering is applied.
 
 #### `nearest_neighbor_excluded_images.csv`
 
-Contains images excluded from the final analysis because the detected number of couples was outside the accepted range.
+Lists the images that were excluded from the final analysis because the detected number of couples was outside the accepted range.
 
 #### `nearest_neighbor_analysis_filtered.csv`
 
-Contains only images included in the final formation analysis.
+Contains the nearest-neighbor distances for all formation images included in the final analysis after filtering.
 
 #### `nearest_neighbor_group_summary_filtered.csv`
 
-Contains aggregated results for each formation group.
+Provides aggregated summary statistics for each formation group, including the number of analyzed images, mean nearest-neighbor distance, standard deviation, minimum, and maximum values.
 
 ## 14. Formation Analysis Metrics
 
-The formation analysis calculates:
+The formation analysis calculates the following spatial metrics:
 
-* Average nearest-neighbor distance
-* Standard deviation of nearest-neighbor distances
-* Coefficient of Variation (CV)
-* Minimum nearest-neighbor distance
-* Maximum nearest-neighbor distance
+- **Average nearest-neighbor distance**
+- **Standard deviation of nearest-neighbor distances**
+- **Coefficient of Variation (CV)**
+- **Minimum nearest-neighbor distance**
+- **Maximum nearest-neighbor distance**
+
+These metrics are used to quantify the spacing and regularity of couples within a DanceSport formation.
 
 ### 14.1 Coefficient of Variation
 
-The coefficient of variation is used to describe spacing consistency:
+The **Coefficient of Variation (CV)** is used to measure the consistency of the spacing between neighboring couples.
 
+It is calculated as:
+
+```text
 CV = standard deviation / average nearest-neighbor distance
+```
 
-Interpretation:
+### Interpretation
 
-Lower CV  = more regular spacing
-Higher CV = less regular spacing
+- **Lower CV** → More regular and consistent spacing between couples.
+- **Higher CV** → Less regular spacing with greater variation between neighboring couples.
 
-The CV does not replace human judging but provides an objective measure of spatial regularity
+The Coefficient of Variation does not replace human judging but provides an objective quantitative measure of the spatial regularity of a formation.
 
 ## 15. Formation Detection Quality
 
-The detection quality of the Formation Couple Model is evaluated using:
+The detection quality of the **Formation Couple Model** is evaluated by running:
 
+```bash
 python src/compare_lat_std_detection_quality.py
+```
 
-This script compares the number of annotated couples with the number of predicted couples.
+The script compares the number of annotated couples (ground truth) with the number of couples detected by the model for each formation image.
 
-Generated files:
+### Generated Files
 
+```text
 lat_std_detection_quality_per_image.csv
 lat_std_detection_quality_summary.csv
+```
+
+- **`lat_std_detection_quality_per_image.csv`** – Contains the detection quality for each analyzed image, including the annotated and detected number of couples.
+- **`lat_std_detection_quality_summary.csv`** – Provides aggregated statistics summarizing the detection quality across all analyzed formation images.
+
+---
 
 ## 16. Streamlit Application
 
-The graphical user interface is implemented with Streamlit.
+The graphical user interface is implemented using **Streamlit**.
 
-Start the application:
+Start the application with:
 
+```bash
 streamlit run app.py
+```
 
-The application contains three main pages:
+The application consists of three main pages:
 
-1. **Detection**
+### 1. Detection
 
-   * Upload images.
-   * Upload Video.
-   * Browse dataset images.
-   * Select detection model.
-   * Adjust confidence threshold.
-   * Display prediction results.
+The **Detection** page allows users to:
 
-2. **Evaluation**
+- upload images,
+- upload videos,
+- browse dataset images,
+- select the detection model,
+- adjust the confidence threshold,
+- display prediction results.
 
-   * Show training and evaluation metrics.
-   * Display confusion matrices.
-   * Display PR curves and F1 curves.
-   * Show test prediction images.
+### 2. Evaluation
 
-3. **Formation Analysis**
+The **Evaluation** page provides access to the trained model performance, including:
 
-   * Display nearest-neighbor statistics.
-   * Show formation comparison charts.
-   * Show formation visualizations.
-   * Show error analysis examples.
-   * Show demonstration videos.
+- training and evaluation metrics,
+- confusion matrices,
+- Precision–Recall (PR) curves,
+- F1 curves,
+- test prediction images.
 
----
+### 3. Formation Analysis
+
+The **Formation Analysis** page presents the spatial analysis of DanceSport formations, including:
+
+- nearest-neighbor statistics,
+- comparison charts for Latin and Standard formations,
+- formation visualizations,
+- detection error analysis examples,
+- demonstration videos.
 
 ## 17. Reproducing the Complete Workflow
 
-To reproduce the complete workflow from training to analysis:
+The following steps reproduce the complete workflow, from model training to formation analysis and visualization.
 
-### Step 1: Activate Environment
+### Step 1: Activate the Virtual Environment
 
+```bash
 source .venv/bin/activate
+```
 
-### Step 2: Train Model
+### Step 2: Train a Model
 
-Open `src/train_yolo.py` and select the dataset:
+Open `src/train_yolo.py` and select the desired dataset:
 
+```python
 SELECTED_DATASET = "formation_couple"
+```
 
-Then run:
+Then start the training:
 
+```bash
 python src/train_yolo.py
+```
 
-### Step 3: Evaluate Model
+### Step 3: Evaluate the Model
 
-Open `src/evaluate_model.py` and select the model:
+Open `src/evaluate_model.py` and select the model to evaluate:
 
+```python
 SELECTED_MODEL = "formation_couple"
+```
 
 Then run:
 
+```bash
 python src/evaluate_model.py
+```
 
-### Step 4: Run Formation Analysis
+### Step 4: Perform the Formation Analysis
 
+Execute the complete formation analysis pipeline:
+
+```bash
 python src/analyze_formation.py
 python src/nearest_neighbor_analysis.py
 python src/compare_lat_std_detection_quality.py
+```
 
-### Step 5: Start Streamlit
+### Step 5: Start the Streamlit Application
 
+Launch the graphical user interface:
+
+```bash
 streamlit run app.py
+```
 
-### 18. CPU Training
+---
 
-The project was developed on CPU-only hardware. Training can take several hours depending on the model.
+## 18. CPU Training
+
+The project was developed and tested on **CPU-only hardware**. Depending on the dataset and model configuration, training may require several hours.
 
 Approximate training times:
 
-Dancer Category Model: several hours
-Dance Style Model: several hours
-Formation Couple Model: longer due to image size 640 and 80 epochs
+- **Dancer Category Model:** Several hours
+- **Dance Style Model:** Several hours
+- **Formation Couple Model:** Longer training time due to the larger input image size (640 × 640) and 80 training epochs.
 
 ### Model Weights
 
-If the trained weights are already available, the models do not need to be retrained. Evaluation, test prediction, video detection, and Streamlit inference can be executed directly using the stored `best.pt` files.
+If the trained model weights are already available, retraining is not required. The stored `best.pt` files can be used directly for:
 
----
+- model evaluation,
+- image prediction,
+- video detection,
+- formation analysis,
+- inference through the Streamlit application.
+
+The trained weights are located in:
+
+```text
+runs/detect/model_name/weights/best.pt
+```
 
 ## 19. Expected Output Structure
 
@@ -699,139 +857,202 @@ runs/
 
 ## 20. Purpose of the Formation Couple Model
 
-The Formation Couple Model is the main contribution of this project.
+The **Formation Couple Model** represents the main contribution of this project.
 
-The model does not only detect objects. Its detections are used to extract the spatial coordinates of couples in formation scenes.
+Unlike conventional object detection models, its purpose extends beyond detecting couples in DanceSport formation images. The detected bounding boxes are used to extract the spatial coordinates of each couple, forming the basis for a quantitative analysis of formation quality.
 
-These coordinates allow the analysis of:
+The extracted coordinates enable the analysis of:
 
-* distances between couples
-* spacing consistency
-* formation regularity
-* Latin vs. Standard differences
-* detection errors caused by open Latin figures or occlusions
+- distances between neighboring couples,
+- spacing consistency,
+- formation regularity,
+- differences between Latin and Standard formations,
+- detection errors caused by open Latin figures or occlusions.
 
-This directly supports the goal of using computer vision for AI-assisted ballroom dance formation analysis.
+These analyses provide objective spatial metrics that complement traditional human evaluation and support the overall goal of this project: applying computer vision and artificial intelligence to assist the analysis of DanceSport formations.
 
 ## 21. Reproducibility
 
 This project was developed to ensure that all experiments can be reproduced from the provided source code, datasets, trained model weights, and analysis scripts.
 
-### Development Environment
+## Development Environment
 
-The framework was developed and tested using the following environment:
+The framework was developed and tested using the following software environment:
 
-Operating System: macOS
-Python Version: 3.11
-Ultralytics: YOLO26
-PyTorch
-OpenCV
-NumPy
-Pandas
-Matplotlib
-Pillow
-Streamlit
+| Component | Version / Specification |
+|----------|--------------------------|
+| Operating System | macOS |
+| Python | 3.11 |
+| Ultralytics | YOLO26n |
+| PyTorch | Latest compatible version |
+| OpenCV | Latest compatible version |
+| NumPy | Latest compatible version |
+| Pandas | Latest compatible version |
+| Matplotlib | Latest compatible version |
+| Pillow | Latest compatible version |
+| Streamlit | Latest compatible version |
 
-Hardware used during development:
+### Hardware
 
-MacBook Air (2017)
-Intel Core i5
-8 GB RAM
-Intel HD Graphics 6000
-CPU-only training and inference
+The project was developed and evaluated on the following hardware:
 
-## summary
+| Component | Specification |
+|----------|---------------|
+| Device | MacBook Air (2017) |
+| Processor | Intel Core i5 |
+| Memory | 8 GB RAM |
+| Graphics | Intel HD Graphics 6000 |
+| Training | CPU only |
+| Inference | CPU only |
+
+## Summary
 
 ### Reproducing the Complete Workflow
 
-The complete workflow can be reproduced by executing the following steps in order.
+The complete workflow can be reproduced by following the steps below.
 
-#### Step 1: Create and Activate Virtual Environment
+### Step 1: Create and Activate the Virtual Environment
 
+Create a virtual environment:
+
+```bash
 python3 -m venv .venv
+```
 
-#### Step 2: Install Dependencies
+Activate the environment:
 
+```bash
+source .venv/bin/activate
+```
+
+### Step 2: Install the Dependencies
+
+```bash
 pip install -r requirements.txt
+```
 
-#### Step 3: Train a Model
+### Step 3: Train a Model
 
-Select the desired dataset inside:
+Select the desired dataset in:
 
+```text
 src/train_yolo.py
+```
 
-and run:
+Then start the training:
 
+```bash
 python src/train_yolo.py
+```
 
-The trained model weights will be stored in:
+The trained model weights are stored in:
 
+```text
 runs/detect/
+```
 
-#### Step 4: Evaluate the Model
+### Step 4: Evaluate the Model
 
-Select the desired model inside:
+Select the desired model in:
 
+```text
 src/evaluate_model.py
+```
 
-and run:
+Then run:
 
+```bash
 python src/evaluate_model.py
+```
 
-Evaluation results will be stored in:
+The evaluation results are stored in:
 
+```text
 runs/evaluation/
+```
 
-#### Step 5: Generate Test Predictions
+### Step 5: Generate Test Predictions
 
+```bash
 python src/detect_image.py
+```
 
-Prediction images will be stored in:
+The prediction images are stored in:
 
+```text
 runs/test/
+```
 
-#### Step 6: Run Video Detection
+### Step 6: Run Video Detection
 
+```bash
 python src/detect_video.py
+```
 
-Processed videos will be stored in:
+The processed videos are stored in:
 
+```text
 runs/videos/
+```
 
-#### Step 7: Perform Formation Analysis
+### Step 7: Perform Formation Analysis
 
+Execute the complete formation analysis pipeline:
+
+```bash
 python src/analyze_formation.py
 python src/nearest_neighbor_analysis.py
 python src/compare_lat_std_detection_quality.py
+```
 
-Generated analysis results will be stored in:
+The generated analysis results are stored in:
 
+```text
 formation_visualizations/
 formation_error_analysis/
+```
 
-and in the generated CSV result files.
+Additional statistical results are written to the generated CSV files.
 
-#### Step 8: Launch the Streamlit Application
+### Step 8: Launch the Streamlit Application
 
+Start the graphical user interface:
+
+```bash
 streamlit run app.py
+```
 
-The application will start locally at:
+The application will be available locally at:
 
+```text
 http://localhost:8501
+```
 
-### Using Pretrained Models
+---
 
-If the trained model weights are already available in:
+## Using Pretrained Models
 
+If pretrained model weights are already available in:
+
+```text
 runs/detect/*/weights/best.pt
+```
 
 the training step can be skipped.
 
-In this case, the evaluation scripts, test prediction scripts, video detection scripts, formation analysis tools, and the Streamlit application can be executed directly using the provided weights.
+In this case, the following components can be executed directly using the pretrained weights:
 
-### Expected Results
+- Model evaluation
+- Test image prediction
+- Video detection
+- Formation analysis
+- Streamlit application
 
-When all steps are executed successfully, the following outputs should be reproducible:
+---
+
+## Expected Results
+
+After successfully completing all steps, the following outputs should be reproducible:
 
 - Trained YOLO model weights
 - Evaluation metrics
@@ -842,6 +1063,6 @@ When all steps are executed successfully, the following outputs should be reprod
 - Formation coordinate data
 - Nearest-neighbor analysis results
 - Formation quality visualizations
-- Streamlit-based interactive demonstrations
+- Interactive Streamlit demonstrations
 
-This reproducibility workflow enables independent verification of all experiments and results presented in the Bachelor thesis.
+This workflow enables the complete reproduction and independent verification of the experiments, analyses, and results presented in this bachelor's thesis.
