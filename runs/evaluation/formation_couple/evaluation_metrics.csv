@@ -1,0 +1,2 @@
+model,precision,recall,mAP50,mAP50_95
+formation_couple,0.9657,0.9227,0.9737,0.7838

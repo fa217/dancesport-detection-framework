@@ -1,0 +1,2 @@
+model,precision,recall,mAP50,mAP50_95
+dance_style,0.902,0.8321,0.9172,0.8081
