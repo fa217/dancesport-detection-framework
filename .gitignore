@@ -12,7 +12,7 @@ __pycache__/
 datasets/
 all_formation_images/
 videos/
-runs/
+
 
 # Framework folders
 framework/input/
