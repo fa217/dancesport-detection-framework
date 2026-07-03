@@ -128,16 +128,31 @@ If you received the project as a ZIP archive:
 
 # Before You Start
 
-This GitHub repository contains the complete source code of the Dancesport Detection Framework.
+This GitHub repository contains the complete DanceSport Detection Framework, including:
+
+- Source code
+- Streamlit application
+- Trained YOLO models (`runs/detect/`)
+- Evaluation results (`runs/evaluation/`)
+- Test results (`runs/test/`)
+- Video detection results (`runs/videos/`)
+- Formation analysis results
 
 Due to GitHub's file size limitations, the following resources are **not included** in this repository:
 
 - Datasets
-- Trained YOLO models
+- all_formation_images
 - Example videos
-- Generated evaluation results
 
-These files can be downloaded from the following u:cloud link:
+These files are only required if you want to:
+
+- train the YOLO models,
+- reproduce the training and evaluation process,
+- evaluate the models using the original datasets,
+- browse the datasets in the Streamlit application,
+- or perform detection on videos.
+
+The datasets and example videos can be downloaded from the following u:cloud link:
 
 **<https://ucloud.univie.ac.at/index.php/s/3i4CSercWDFkges>**
 
@@ -148,51 +163,10 @@ all_formation_images/
 
 datasets/
 
-runs/
-
 videos/
 ```
 
-The trained YOLO models are already included inside
-
-```text
-runs/detect/
-```
-
-Therefore, no additional model configuration is required.
-
-The Streamlit application automatically loads
-
-- the selected YOLO model,
-- the corresponding dataset,
-- and the associated evaluation results
-
-based on the model selected by the user.
-
-The overall workflow of the framework is illustrated below.
-
-```text
-                 GitHub Repository
-                        │
-                        ▼
-         Download additional files
-              (u:cloud resources)
-                        │
-                        ▼
-         Copy folders into project
-                        │
-                        ▼
-             streamlit run app.py
-                        │
-                        ▼
-        ┌───────────────────────────────────┐
-        │      Streamlit Application        │
-        └───────────────────────────────────┘
-                        │
-        ┌───────────────┼────────────────┐
-        ▼               ▼                ▼
-   Detection       Evaluation     Formation Analysis
-```
+The framework is ready to use after installing the required Python packages. No additional model configuration is required, as the trained models and all generated results are already included in the repository.
 
 # Part 4 — Create a Virtual Environment
 
