@@ -77,7 +77,8 @@ metrics = model.val(
     imgsz=config["imgsz"],
     project=str(ROOT / "runs/evaluation"),
     name=SELECTED_MODEL,
-    exist_ok=True
+    exist_ok=True,
+    workers=0
 )
 
 

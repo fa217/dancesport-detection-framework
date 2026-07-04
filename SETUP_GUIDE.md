@@ -235,6 +235,34 @@ The framework automatically installs all required dependencies, including
 - pillow
 - matplotlib
 
+## Optional: NVIDIA GPU (CUDA)
+
+If you want to train the models using an NVIDIA GPU, make sure that the **NVIDIA CUDA Toolkit** and the corresponding **NVIDIA drivers** are installed on your system.
+
+If the CPU version of PyTorch is already installed, replace it with the CUDA-enabled version:
+
+```bash
+pip uninstall torch torchvision
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu132
+```
+
+Verify that PyTorch detects the GPU:
+
+```python
+import torch
+
+print(torch.cuda.is_available())
+print(torch.cuda.get_device_name(0))
+```
+
+Alternatively, check GPU availability from the terminal:
+
+```bash
+python3 -c "import torch; print(torch.cuda.is_available())"
+```
+
+If the output is `True`, the framework will automatically use the NVIDIA GPU during model training.
+
 ---
 
 # Part 7 — Verify the Installation
